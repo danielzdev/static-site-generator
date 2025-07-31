@@ -28,7 +28,5 @@ class LeafNode(HTMLNode):
             raise ValueError("ERROR: Node has no value")
         elif self.tag is None:
             return self.value
-        elif self.props:
-            return f"<{self.tag} {self.props_to_html()}>{self.value}</{self.tag}>"
         else:
-            return f"<{self.tag}>{self.value}</{self.tag}>"
+            return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
