@@ -57,6 +57,6 @@ def split_nodes_image(old_nodes):
             for match in matches:
                 if len(match[0]) > 0:
                     new_nodes.append(TextNode(match[0], TextType.TEXT))
-                    new_nodes.append(TextNode(match[1], TextType.IMAGE, match[2]))
+                new_nodes.append(TextNode(match[1], TextType.IMAGE, match[2]))
 
     return new_nodes
