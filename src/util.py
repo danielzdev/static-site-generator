@@ -41,7 +41,7 @@ def split_nodes_image(old_nodes):
     for node in old_nodes:
         split_text = re.split(r"(!\[.*?\]\(.*?\))", node.text)
         if len(split_text) == 1:
-            new_nodes.append(TextNode(node.text, TextType.TEXT))
+            new_nodes.append(node)
             continue
 
         for text in split_text:
@@ -60,7 +60,7 @@ def split_nodes_link(old_nodes):
     for node in old_nodes:
         split_text = re.split(r"(?<!\!)(\[.*?\]\(.*?\))", node.text)
         if len(split_text) == 1:
-            new_nodes.append(TextNode(node.text, TextType.TEXT))
+            new_nodes.append(node)
             continue
 
         for text in split_text:
