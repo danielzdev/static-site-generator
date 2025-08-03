@@ -8,7 +8,7 @@ class TextType(Enum):
     BOLD = "bold"
     ITALIC = "italic"
     CODE = "code"
-    URL = "url"
+    LINK = "url"
     IMAGE = "image"
 
 
@@ -35,7 +35,7 @@ def text_node_to_html_node(text_node):
             return LeafNode(tag="i", value=text_node.text)
         case TextType.CODE:
             return LeafNode(tag="code", value=text_node.text)
-        case TextType.URL:
+        case TextType.LINK:
             return LeafNode(tag="a", value=text_node.text, props={"href": text_node.url})
         case TextType.IMAGE:
             return LeafNode(tag="img", value="", props={"src": text_node.url, "alt": text_node.text})

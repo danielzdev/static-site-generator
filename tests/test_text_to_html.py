@@ -17,7 +17,7 @@ class TestHTMLNodePropsToHTML(unittest.TestCase):
         self.assertEqual(html_node.value, "This is a bold text node")
 
     def test_url(self):
-        node = TextNode("This is a URL", TextType.URL, "http://www.example.com")
+        node = TextNode("This is a URL", TextType.LINK, "http://www.example.com")
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "a")
         self.assertEqual(html_node.value, "This is a URL")
