@@ -12,6 +12,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
     for node in old_nodes:
         if delimiter not in node.text:
+            new_nodes.append(node)
             continue
         index = node.text.index(delimiter)
         second_index = node.text.find(delimiter, index + 1)
