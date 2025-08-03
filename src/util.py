@@ -14,13 +14,14 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         if delimiter not in node.text:
             new_nodes.append(node)
             continue
+        # Text with a *delimiter* and more text
         index = node.text.index(delimiter)
         second_index = node.text.find(delimiter, index + 1)
 
         new_nodes.extend(
             [
                 TextNode(node.text[:index], TextType.TEXT),
-                TextNode(node.text[index : second_index + 1], text_type),
+                TextNode(node.text[index + 1 : second_index], text_type),
                 TextNode(node.text[second_index + 1 :], TextType.TEXT),
             ]
         )

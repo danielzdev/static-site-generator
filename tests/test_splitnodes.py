@@ -10,7 +10,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         result = split_nodes_delimiter(nodes, "`", TextType.CODE)
         self.assertEqual(result[0].text, "Here is ")
         self.assertEqual(result[0].text_type, TextType.TEXT)
-        self.assertEqual(result[1].text, "`code`")
+        self.assertEqual(result[1].text, "code")
         self.assertEqual(result[1].text_type, TextType.CODE)
         self.assertEqual(result[2].text, "")
         self.assertEqual(result[2].text_type, TextType.TEXT)
@@ -42,7 +42,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
 
         self.assertEqual(result[1].text, "Middle has ")
         self.assertEqual(result[1].text_type, TextType.TEXT)
-        self.assertEqual(result[2].text, "*bold*")
+        self.assertEqual(result[2].text, "bold")
         self.assertEqual(result[2].text_type, TextType.BOLD)
         self.assertEqual(result[3].text, " text, neat.")
         self.assertEqual(result[3].text_type, TextType.TEXT)
@@ -52,7 +52,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
 
         self.assertEqual(result[5].text, "Some ")
         self.assertEqual(result[5].text_type, TextType.TEXT)
-        self.assertEqual(result[6].text, "*MORE*")
+        self.assertEqual(result[6].text, "MORE")
         self.assertEqual(result[6].text_type, TextType.BOLD)
         self.assertEqual(result[7].text, " bold text :D")
         self.assertEqual(result[7].text_type, TextType.TEXT)
