@@ -39,24 +39,16 @@ def split_nodes_image(old_nodes):
     new_nodes = []
 
     for node in old_nodes:
-        has_image = re.findall(r"\!\[(.*?)\]\((.*?)\)", node.text)
-        if not has_image:
+        split_text = re.split(r"(!\[.*?\]\(.*?\))", node.text)
+        if len(split_text) == 1:
             new_nodes.append(TextNode(node.text, TextType.TEXT))
             continue
 
-        split_image_text = node.text.split(")")
-        for text in split_image_text:
-            if len(text) == 0:
-                continue
-
-            matches = re.findall(r"(.*?)\!\[(.*?)\]\((.*)", text)
-            if not matches:
+        for text in split_text:
+            match = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
+            if not match and len(text) > 0:
                 new_nodes.append(TextNode(text, TextType.TEXT))
-                continue
-
-            for match in matches:
-                if len(match[0]) > 0:
-                    new_nodes.append(TextNode(match[0], TextType.TEXT))
-                new_nodes.append(TextNode(match[1], TextType.IMAGE, match[2]))
+            elif match:
+                new_nodes.append(TextNode(match[0][0], TextType.IMAGE, match[0][1]))
 
     return new_nodes

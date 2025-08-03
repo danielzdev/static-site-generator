@@ -71,3 +71,61 @@ class TestSplitNodesImage(unittest.TestCase):
             ],
             new_nodes,
         )
+
+    def test_single_image_at_start(self):
+        node = TextNode("![start image](https://start.com/img.png) with text after", TextType.TEXT)
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("start image", TextType.IMAGE, "https://start.com/img.png"),
+                TextNode(" with text after", TextType.TEXT),
+            ],
+            new_nodes,
+        )
+
+    def test_single_image_at_end(self):
+        node = TextNode("Text before ![end image](https://end.com/img.png)", TextType.TEXT)
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("Text before ", TextType.TEXT),
+                TextNode("end image", TextType.IMAGE, "https://end.com/img.png"),
+            ],
+            new_nodes,
+        )
+
+    def test_only_image(self):
+        node = TextNode("![only image](https://only.com/img.png)", TextType.TEXT)
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("only image", TextType.IMAGE, "https://only.com/img.png"),
+            ],
+            new_nodes,
+        )
+
+    def test_image_with_empty_text(self):
+        node = TextNode("Text with ![](https://empty.com/img.png) empty image text", TextType.TEXT)
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("Text with ", TextType.TEXT),
+                TextNode("", TextType.IMAGE, "https://empty.com/img.png"),
+                TextNode(" empty image text", TextType.TEXT),
+            ],
+            new_nodes,
+        )
+
+    def test_image_and_link(self):
+        node = TextNode(
+            "First node with ![image](https://example.com/img1.png) and [link](https://example.com)", TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("First node with ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://example.com/img1.png"),
+                TextNode(" and [link](https://example.com)", TextType.TEXT),
+            ],
+            new_nodes,
+        )
