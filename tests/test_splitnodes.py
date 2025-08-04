@@ -12,8 +12,6 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertEqual(result[0].text_type, TextType.TEXT)
         self.assertEqual(result[1].text, "code")
         self.assertEqual(result[1].text_type, TextType.CODE)
-        self.assertEqual(result[2].text, "")
-        self.assertEqual(result[2].text_type, TextType.TEXT)
 
     def test_no_delimiter_present(self):
         nodes = [TextNode("No formatting here", TextType.TEXT)]
@@ -28,12 +26,12 @@ class TestSplitNodesDelimiter(unittest.TestCase):
     def test_multiple_textnodes_mixed_delimiters(self):
         nodes = [
             TextNode("No delimiter here", TextType.TEXT),
-            TextNode("Middle has *bold* text, neat.", TextType.TEXT),
+            TextNode("Middle has **bold** text, neat.", TextType.TEXT),
             TextNode("Another one with no match", TextType.TEXT),
-            TextNode("Some *MORE* bold text :D", TextType.TEXT),
+            TextNode("Some **MORE** bold text :D", TextType.TEXT),
             TextNode("Middle has _italic_ text, neat.", TextType.ITALIC),
         ]
-        result = split_nodes_delimiter(nodes, "*", TextType.BOLD)
+        result = split_nodes_delimiter(nodes, "**", TextType.BOLD)
 
         self.assertEqual(len(result), 9)
 

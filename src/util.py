@@ -5,26 +5,36 @@ from src.textnode import TextNode, TextType
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
-    delimiters = {"*": TextType.BOLD, "_": TextType.ITALIC, "`": TextType.CODE}
+    delimiters = {"**": TextType.BOLD, "_": TextType.ITALIC, "`": TextType.CODE}
 
     if delimiter not in delimiters:
         raise ValueError(f"Invalid delimiter: {delimiter}")
 
     for node in old_nodes:
+        text = node.text
         if delimiter not in node.text:
             new_nodes.append(node)
             continue
-        # Text with a *delimiter* and more text
-        index = node.text.index(delimiter)
-        second_index = node.text.find(delimiter, index + 1)
 
-        new_nodes.extend(
-            [
-                TextNode(node.text[:index], TextType.TEXT),
-                TextNode(node.text[index + 1 : second_index], text_type),
-                TextNode(node.text[second_index + 1 :], TextType.TEXT),
-            ]
-        )
+        offset = len(delimiter)
+        while True:
+            start = text.find(delimiter)
+            if start == -1:
+                if text:  # Only add non-empty text nodes
+                    new_nodes.append(TextNode(text, TextType.TEXT))
+                break
+
+            closing = text.find(delimiter, start + offset)
+            if closing == -1:
+                if text:  # Only add non-empty text nodes
+                    new_nodes.append(TextNode(text, TextType.TEXT))
+                break
+
+            if start > 0:
+                new_nodes.append(TextNode(text[:start], TextType.TEXT))
+
+            new_nodes.append(TextNode(text[start + offset : closing], text_type))
+            text = text[closing + offset :]
 
     return new_nodes
 
