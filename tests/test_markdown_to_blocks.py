@@ -32,7 +32,7 @@ This is the same paragraph on a new line
     def test_markdown_to_blocks_empty_string(self):
         md = ""
         blocks = markdown_to_blocks(md)
-        self.assertEqual(blocks, [""])
+        self.assertEqual(blocks, [])
 
     def test_markdown_to_blocks_multiple_empty_lines(self):
         md = """First paragraph
@@ -91,4 +91,4 @@ Final paragraph."""
     def test_markdown_to_blocks_only_newlines(self):
         md = "\n\n\n"
         blocks = markdown_to_blocks(md)
-        self.assertEqual(blocks, ["", ""])
+        self.assertEqual(blocks, [])
