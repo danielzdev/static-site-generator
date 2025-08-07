@@ -79,7 +79,7 @@ def convert_special_block_to_node(block):
     lines = block.splitlines()
     for line in lines:
         line = line[2:] if tag == "ol" else line[1:]
-        text_nodes = text_to_textnodes(line)
+        text_nodes = text_to_textnodes(line.strip())
 
         leaf_nodes = []
         for text_node in text_nodes:
