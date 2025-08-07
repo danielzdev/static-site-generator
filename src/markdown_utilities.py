@@ -117,8 +117,8 @@ def generate_page(from_path, template_path, dest_path):
     html_node = markdown_to_html_node(markdown).to_html()
     title = extract_title(markdown)
 
-    template = template.replace("{{title}}", title)
-    template = template.replace("{{content}}", html_node)
+    template = template.replace("{{ Title }}", title)
+    template = template.replace("{{ Content }}", html_node)
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as f:

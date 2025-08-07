@@ -13,6 +13,7 @@ def main():
         shutil.rmtree(dir_path_public)
 
     copy_static_to_public(dir_path_static, dir_path_public)
+    generate_page("./content/index.md", "./template.html", "./public/index.html")
 
 
 if __name__ == "__main__":
