@@ -1,3 +1,5 @@
+import os
+
 from src.htmlnode import LeafNode, ParentNode
 from src.markdown_block import BlockType, get_block_type
 from src.textnode import text_node_to_html_node
@@ -64,8 +66,9 @@ def convert_heading_block_to_node(block):
 
     tag = headings[count]
     text = block[count + 1 :]
-    child_nodes = text_to_textnodes(text)
-    return ParentNode(tag, children=child_nodes)
+    text_nodes = text_to_textnodes(text)
+    leaf_nodes = [text_node_to_html_node(n) for n in text_nodes]
+    return ParentNode(tag, leaf_nodes)
 
 
 def convert_special_block_to_node(block):
@@ -75,7 +78,7 @@ def convert_special_block_to_node(block):
 
     lines = block.splitlines()
     for line in lines:
-        line = line[1:]
+        line = line[2:] if tag == "ol" else line[1:]
         text_nodes = text_to_textnodes(line)
 
         leaf_nodes = []
@@ -101,3 +104,22 @@ def extract_title(markdown):
             return line
 
     raise ValueError("No title found")
+
+
+def generate_page(from_path, template_path, dest_path):
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}....")
+    with open(from_path, "r") as f:
+        markdown = f.read()
+
+    with open(template_path, "r") as f:
+        template = f.read()
+
+    html_node = markdown_to_html_node(markdown).to_html()
+    title = extract_title(markdown)
+
+    template = template.replace("{{title}}", title)
+    template = template.replace("{{content}}", html_node)
+
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    with open(dest_path, "w") as f:
+        f.write(template)
