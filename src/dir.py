@@ -3,7 +3,8 @@ import shutil
 
 
 def copy_static_to_public():
-    shutil.rmtree("public")
+    if os.path.exists("public"):
+        shutil.rmtree("public")
     os.mkdir("public")
     copy_items_to_new_dir("static", "public")
 
