@@ -1,9 +1,8 @@
-from textnode import TextNode, TextType
+from dir import copy_static_to_public
 
 
 def main():
-    node = TextNode("This is a text node", TextType.TEXT)
-    print(node)
+    copy_static_to_public()
 
 
 if __name__ == "__main__":
