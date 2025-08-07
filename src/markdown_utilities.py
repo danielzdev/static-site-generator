@@ -88,3 +88,16 @@ def convert_special_block_to_node(block):
         parent.children.append(parent_node)
 
     return parent
+
+
+def extract_title(markdown):
+    lines = markdown.splitlines()
+    for line in lines:
+        line = line.strip()
+        if len(line) < 1 or not line.startswith("#"):
+            continue
+        elif line.startswith("#"):
+            line = line.replace("#", "").strip()
+            return line
+
+    raise ValueError("No title found")
