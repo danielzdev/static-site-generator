@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from src.dir import copy_static_to_public
+from src.copy_dir_contents import copy_static_to_public
 from src.markdown_utilities import generate_page
 
 dir_path_static = "./static"
