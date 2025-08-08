@@ -1,1 +1,1 @@
-uv run -m src.main "/static_site_generator/"
+uv run -m src.main "/static-site-generator/"
