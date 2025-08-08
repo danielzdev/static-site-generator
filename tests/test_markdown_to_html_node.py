@@ -60,7 +60,7 @@ the **same** even with inline stuff
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><blockquote><p>This is a quote block</p><p>This is <b>another</b> quote block</p><p>This is a third quote block with an <i>italic</i> word</p></blockquote></div>",
+            "<div><blockquote>This is a quote block This is <b>another</b> quote block This is a third quote block with an <i>italic</i> word</blockquote></div>",
         )
 
     def test_multiple_blocks(self):
@@ -85,5 +85,5 @@ the **same** even with inline stuff
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><blockquote><p>This is a quote block</p><p>This is <b>another</b> quote block</p><p>This is a third quote block with an <i>italic</i> word</p></blockquote><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+            "<div><blockquote>This is a quote block This is <b>another</b> quote block This is a third quote block with an <i>italic</i> word</blockquote><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )

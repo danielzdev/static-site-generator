@@ -1,13 +1,104 @@
 import os
 
-from src.htmlnode import LeafNode, ParentNode
+from src.htmlnode import ParentNode
 from src.markdown_block import BlockType, get_block_type
-from src.textnode import text_node_to_html_node
+from src.textnode import TextNode, TextType, text_node_to_html_node
 from src.util import text_to_textnodes
 
 
 def markdown_to_blocks(markdown):
     return [block.strip() for block in markdown.split("\n\n") if block.strip()]
+
+
+def convert_block_to_node(block):
+    type = get_block_type(block)
+
+    if type == BlockType.CODE:
+        return convert_code_block_to_node(block)
+    elif type == BlockType.PARAGRAPH:
+        return convert_paragraph_block_to_node(block)
+    elif type == BlockType.HEADING:
+        return convert_heading_block_to_node(block)
+    elif type == BlockType.QUOTE:
+        return convert_quote_block_to_node(block)
+    elif type == BlockType.ORDERED_LIST:
+        return convert_ol_list_block_to_node(block)
+    elif type == BlockType.UNORDERED_LIST:
+        return convert_ul_list_block_to_node(block)
+    else:
+        pass
+
+
+def convert_paragraph_block_to_node(block):
+    lines = block.split("\n")
+    paragraph = " ".join(lines)
+    children = text_to_children(paragraph)
+    return ParentNode("p", children)
+
+
+def convert_heading_block_to_node(block):
+    level = 0
+    for char in block:
+        if char == "#":
+            level += 1
+        else:
+            break
+    if level + 1 >= len(block):
+        raise ValueError(f"invalid heading level: {level}")
+    text = block[level + 1 :]
+    children = text_to_children(text)
+    return ParentNode(f"h{level}", children)
+
+
+def convert_ol_list_block_to_node(block):
+    items = block.split("\n")
+    html_items = []
+    for item in items:
+        text = item[3:]
+        children = text_to_children(text)
+        html_items.append(ParentNode("li", children))
+    return ParentNode("ol", html_items)
+
+
+def convert_ul_list_block_to_node(block):
+    items = block.split("\n")
+    html_items = []
+    for item in items:
+        text = item[2:]
+        children = text_to_children(text)
+        html_items.append(ParentNode("li", children))
+    return ParentNode("ul", html_items)
+
+
+def convert_quote_block_to_node(block):
+    lines = block.split("\n")
+    new_lines = []
+    for line in lines:
+        if not line.startswith(">"):
+            raise ValueError("invalid quote block")
+        new_lines.append(line.lstrip(">").strip())
+    content = " ".join(new_lines)
+    children = text_to_children(content)
+    return ParentNode("blockquote", children)
+
+
+def convert_code_block_to_node(block):
+    if not block.startswith("```") or not block.endswith("```"):
+        raise ValueError("invalid code block")
+    text = block[4:-3]
+    raw_text_node = TextNode(text, TextType.TEXT)
+    child = text_node_to_html_node(raw_text_node)
+    code = ParentNode("code", [child])
+    return ParentNode("pre", [code])
+
+
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    children = []
+    for text_node in text_nodes:
+        html_node = text_node_to_html_node(text_node)
+        children.append(html_node)
+    return children
 
 
 def markdown_to_html_node(markdown):
@@ -22,77 +113,6 @@ def markdown_to_html_node(markdown):
     return parent_div
 
 
-def convert_block_to_node(block):
-    type = get_block_type(block)
-
-    if type == BlockType.CODE:
-        return convert_code_block_to_node(block)
-    elif type == BlockType.PARAGRAPH:
-        return convert_paragraph_block_to_node(block)
-    elif type == BlockType.HEADING:
-        return convert_heading_block_to_node(block)
-    else:
-        return convert_special_block_to_node(block)
-
-
-def convert_code_block_to_node(block):
-    lines = block.splitlines(keepends=True)
-    cleaned = lines[1:-1]
-    only_code = "".join(cleaned)
-    return ParentNode("pre", children=[LeafNode("code", only_code)])
-
-
-def convert_paragraph_block_to_node(block):
-    block = block.replace("\n", " ")
-
-    leaf_nodes = []
-    text_nodes = text_to_textnodes(block)
-    for text_node in text_nodes:
-        html_node = text_node_to_html_node(text_node)
-        leaf_nodes.append(html_node)
-
-    return ParentNode("p", children=leaf_nodes)
-
-
-def convert_heading_block_to_node(block):
-    headings = {1: "h1", 2: "h2", 3: "h3", 4: "h4", 5: "h5", 6: "h6"}
-
-    count = 0
-    for char in block:
-        if char == "#":
-            count += 1
-        else:
-            break
-
-    tag = headings[count]
-    text = block[count + 1 :]
-    text_nodes = text_to_textnodes(text)
-    leaf_nodes = [text_node_to_html_node(n) for n in text_nodes]
-    return ParentNode(tag, leaf_nodes)
-
-
-def convert_special_block_to_node(block):
-    parent_tags = {">": "blockquote", "-": "ul", "1": "ol"}
-    tag = parent_tags[block[0]]
-    parent = ParentNode(tag, children=[])
-
-    lines = block.splitlines()
-    for line in lines:
-        line = line[2:] if tag == "ol" else line[1:]
-        text_nodes = text_to_textnodes(line.strip())
-
-        leaf_nodes = []
-        for text_node in text_nodes:
-            html_node = text_node_to_html_node(text_node)
-            leaf_nodes.append(html_node)
-
-        child_tag = "p" if tag == "blockquote" else "li"
-        parent_node = ParentNode(child_tag, children=leaf_nodes)
-        parent.children.append(parent_node)
-
-    return parent
-
-
 def extract_title(markdown):
     lines = markdown.splitlines()
     for line in lines:
@@ -102,7 +122,6 @@ def extract_title(markdown):
         elif line.startswith("#"):
             line = line.replace("#", "").strip()
             return line
-
     raise ValueError("No title found")
 
 
